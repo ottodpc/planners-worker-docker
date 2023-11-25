@@ -2,11 +2,19 @@ import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 import express from 'express';
 import { v4 as uuidv4 } from 'uuid';
+import Docker from 'dockerode';
+
+var docker = new Docker();
 
 const id = uuidv4();
 
 console.log(id);
 
+const containerId = process.env.HOSTNAME;
+console.log("container id : " + containerId)
+var containerName = await getContainerNameById(containerId);
+console.log("container Name : " + containerName)
+console.log(containerName);
 dotenv.config();
 
 const PLANNER =
@@ -24,7 +32,7 @@ const port = process.env.PORT || 8080;
 const ADDRESS =
   process.env.ADDRESS !== undefined
     ? process.env.ADDRESS
-    : 'http://localhost:' + port;
+    : `http://${containerName || 'localhost'}:${port}`;
 
 const randInt = (min, max) => Math.floor(Math.random() * (max - min)) + min;
 
@@ -101,3 +109,26 @@ app.listen(port, () => {
   register()
   console.log(`Worker ${id} listening at http://0.0.0.0:${port}`);
 });
+
+async function getContainerNameById(targetContainerId) {
+  const containers = await docker.listContainers({ all: true });
+
+  const container = containers.find(
+      (c) => c.Id.length >= targetContainerId.length && c.Id.startsWith(targetContainerId)
+  );
+
+  console.log("Je ds");
+  if (container) {
+
+      return container.Names[0].slice(1);
+  } else {
+      console.log(`Aucun conteneur trouvé avec l'ID ${targetContainerId}`);
+      containers.forEach((c) => {
+          console.log(`Container ID: ${c.Id}`);
+          console.log(`Container Name: ${c.Names[0]}`);
+          console.log(`Container Image: ${c.Image}`);
+          console.log();
+      });
+      return null;
+  }
+}

@@ -19,6 +19,9 @@ services:
       - planner-container
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      replicas: 2
+
 networks:
   network_name:
     driver: bridge

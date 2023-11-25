@@ -14,7 +14,7 @@ const args = () => ({ a: randInt(0, 40), b: randInt(0, 40) });
 const generateTasks = (i) =>
   new Array(i).fill(1).map((_) => ({ type: taskType(), args: args() }));
 
-let workers = [];
+  let workers = [];
 
 const app = express();
 app.use(express.json());
