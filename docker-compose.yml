@@ -1,0 +1,24 @@
+services:
+  planner-container:
+    build:
+      context: ./planner
+      dockerfile: Dockerfile
+    image: planner-service-node
+    networks:
+      - network_name
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+  worker-container:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    image: worker-service-node
+    networks:
+      - network_name
+    depends_on:
+      - planner-container
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+networks:
+  network_name:
+    driver: bridge
