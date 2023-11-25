@@ -2,7 +2,7 @@
 FROM node:14
 
 ENV PORT 3000
-ENV TASKS 4
+ENV TASKS 50
 
 COPY package*.json ./
 

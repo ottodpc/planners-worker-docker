@@ -12,6 +12,8 @@ services:
     build:
       context: ./worker
       dockerfile: Dockerfile
+      args:
+        SPECIALIZATION: "all"
     image: worker-service-node
     networks:
       - network_name
@@ -20,8 +22,54 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:
-      replicas: 6
+      replicas: 10
+      update_config:
+        parallelism: 1
+        delay: 10s
+    environment:
+      - SPECIALIZATION_ENV=all
 
+  worker-container-mult:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+      args:
+        SPECIALIZATION: "mult"
+    image: worker-service-node
+    networks:
+      - network_name
+    depends_on:
+      - planner-container
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      replicas: 10
+      update_config:
+        parallelism: 1
+        delay: 10s
+    environment:
+      - SPECIALIZATION_ENV=mult
+
+  worker-container-add:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+      args:
+        SPECIALIZATION: "add"
+    image: worker-service-node
+    networks:
+      - network_name
+    depends_on:
+      - planner-container
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      replicas: 10
+      update_config:
+        parallelism: 1
+        delay: 10s
+    environment:
+      - SPECIALIZATION_ENV=add
 networks:
   network_name:
     driver: bridge

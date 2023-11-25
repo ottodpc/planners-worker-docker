@@ -10,6 +10,10 @@ const id = uuidv4();
 
 console.log(id);
 
+const SPECIALIZATION = process.env.SPECIALIZATION_ENV;
+
+console.log('SPECIALIZATION:', SPECIALIZATION);
+
 const containerId = process.env.HOSTNAME;
 console.log("container id : " + containerId)
 var containerName = await getContainerNameById(containerId);
@@ -22,7 +26,6 @@ const PLANNER =
     ? process.env.PLANNER
     : 'http://localhost:3000';
 
-const SPECIALIZATION = Math.random() < 0.5 ? 'mult' : 'add';
 
 const MULT =
   process.env.MULT !== undefined ? JSON.parse(process.env.MULT) : true;
@@ -58,9 +61,8 @@ app.use(
     extended: true,
   })
 );
-
-if ( MULT && SPECIALIZATION === 'mult')
-  app.post('/mult', (req, res) => {
+if ((MULT && SPECIALIZATION === 'mult') || (ADD && SPECIALIZATION === 'all')) {
+    app.post('/mult', (req, res) => {
     if (mult) {
       console.error('mult', 'Already working');
       res.status(403).send('Already working');
@@ -77,8 +79,8 @@ if ( MULT && SPECIALIZATION === 'mult')
     }, duration);
   });
 
-  
-if (ADD && SPECIALIZATION === 'add')
+}
+if ((ADD && SPECIALIZATION === 'add') || (ADD && SPECIALIZATION === 'all')) {
   app.post('/add', (req, res) => {
     if (add) {
       console.error('add', 'Already working');
@@ -95,7 +97,7 @@ if (ADD && SPECIALIZATION === 'add')
       res.send(JSON.stringify({ res: a + b, duration, id }));
     }, duration);
   });
-
+}
 app.get('/', (req, res) => {
   if (mult) {
     res.send(JSON.stringify({ type: 'mult', task, id }));
