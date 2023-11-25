@@ -20,7 +20,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     deploy:
-      replicas: 2
+      replicas: 6
 
 networks:
   network_name:

@@ -29,9 +29,9 @@ app.get('/', (req, res) => {
 });
 
 app.post('/register', (req, res) => {
-  const { url, id } = req.body;
-  console.log(`Register: adding ${url} worker: ${id}`);
-  workers.push({ url, id });
+  const { url, id, specialization } = req.body;
+  console.log(`Register: adding ${url} worker: ${id} with specialization: ${specialization}`);
+  workers.push({ url, id, specialization });
   res.send('ok');
 });
 

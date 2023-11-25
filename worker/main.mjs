@@ -22,6 +22,8 @@ const PLANNER =
     ? process.env.PLANNER
     : 'http://localhost:3000';
 
+const SPECIALIZATION = Math.random() < 0.5 ? 'mult' : 'add';
+
 const MULT =
   process.env.MULT !== undefined ? JSON.parse(process.env.MULT) : true;
 const ADD = process.env.ADD !== undefined ? JSON.parse(process.env.ADD) : true;
@@ -43,7 +45,7 @@ const register = () =>
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ url: ADDRESS, id }),
+    body: JSON.stringify({ url: ADDRESS, id, specialization: SPECIALIZATION }),
   });
 
 let mult = false;
@@ -57,7 +59,7 @@ app.use(
   })
 );
 
-if (MULT)
+if ( MULT && SPECIALIZATION === 'mult')
   app.post('/mult', (req, res) => {
     if (mult) {
       console.error('mult', 'Already working');
@@ -75,7 +77,8 @@ if (MULT)
     }, duration);
   });
 
-if (ADD)
+  
+if (ADD && SPECIALIZATION === 'add')
   app.post('/add', (req, res) => {
     if (add) {
       console.error('add', 'Already working');
